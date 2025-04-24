@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <title>Consulta CNPJ</title>
+  <meta charset="UTF-8" />
+  <title>Consulta de CNPJ</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 40px;
-      background: #f4f4f4;
+      background: #f0f2f5;
     }
     h1 {
       color: #333;
@@ -15,32 +15,39 @@
     input, button {
       padding: 10px;
       font-size: 16px;
-      margin: 10px 0;
+      margin-top: 10px;
     }
     .card {
       background: white;
       padding: 20px;
+      margin-top: 20px;
       border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
       max-width: 800px;
     }
-    pre {
-      background: #eee;
-      padding: 10px;
-      border-radius: 6px;
+    .campo {
+      margin: 8px 0;
+    }
+    .label {
+      font-weight: bold;
+      color: #555;
+    }
+    .valor {
+      margin-left: 10px;
+      color: #222;
     }
   </style>
 </head>
 <body>
 
-  <h1>Consulta de CNPJ</h1>
+  <h1>🔎 Consulta de CNPJ</h1>
 
   <input type="text" id="cnpjInput" placeholder="Digite o CNPJ sem pontos ou traços" />
   <button onclick="consultarCNPJ()">Consultar</button>
 
   <div class="card" id="resultado" style="display:none;">
-    <h2>Dados da Empresa</h2>
-    <pre id="dadosEmpresa"></pre>
+    <h2>📋 Dados da Empresa</h2>
+    <div id="dadosEmpresa"></div>
   </div>
 
   <script>
@@ -64,24 +71,35 @@
         const socios = (data.socios || []).map(s => s.nome).join(", ");
         const cnaes = (est.atividades_secundarias || []).map(a => a.descricao).join(" | ");
 
-        const dados = {
-          "Razão Social": data.razao_social || "",
-          "Nome Fantasia": est.nome_fantasia || "",
-          "Situação Cadastral": est.situacao_cadastral || "",
-          "Data de Abertura": est.data_inicio_atividade || "",
-          "Natureza Jurídica": data.natureza_juridica?.descricao || "",
-          "Capital Social": data.capital_social || "",
+        const campos = {
+          "Razão Social": data.razao_social,
+          "Nome Fantasia": est.nome_fantasia,
+          "Situação Cadastral": est.situacao_cadastral,
+          "Data de Abertura": est.data_inicio_atividade,
+          "Natureza Jurídica": data.natureza_juridica?.descricao,
+          "Capital Social": data.capital_social,
           "Simples": data.simples ? "Sim" : "Não",
-          "Email": est.email || "",
-          "Telefone": est.telefone1 || "",
-          "Endereço": `${est.logradouro || ""}, ${est.numero || ""} - ${est.bairro || ""}, ${cidade}/${estado}`,
-          "CEP": est.cep || "",
-          "CNAE Principal": data.atividade_principal?.descricao || "",
+          "Email": est.email,
+          "Telefone": est.telefone1,
+          "Endereço": `${est.logradouro}, ${est.numero} - ${est.bairro}, ${cidade}/${estado}`,
+          "CEP": est.cep,
+          "CNAE Principal": data.atividade_principal?.descricao,
           "CNAEs Secundários": cnaes,
           "Sócios": socios
         };
 
-        document.getElementById("dadosEmpresa").textContent = JSON.stringify(dados, null, 2);
+        const container = document.getElementById("dadosEmpresa");
+        container.innerHTML = "";
+
+        for (const [label, valor] of Object.entries(campos)) {
+          container.innerHTML += `
+            <div class="campo">
+              <span class="label">${label}:</span>
+              <span class="valor">${valor || "-"}</span>
+            </div>
+          `;
+        }
+
         document.getElementById("resultado").style.display = "block";
       } catch (err) {
         alert("Erro ao consultar CNPJ.");
