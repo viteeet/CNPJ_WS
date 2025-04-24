@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Consulta CNPJ</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #f4f4f4;
+    }
+    h1 {
+      color: #333;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px 0;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      max-width: 800px;
+    }
+    pre {
+      background: #eee;
+      padding: 10px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Consulta de CNPJ</h1>
+
+  <input type="text" id="cnpjInput" placeholder="Digite o CNPJ sem pontos ou traços" />
+  <button onclick="consultarCNPJ()">Consultar</button>
+
+  <div class="card" id="resultado" style="display:none;">
+    <h2>Dados da Empresa</h2>
+    <pre id="dadosEmpresa"></pre>
+  </div>
+
+  <script>
+    async function consultarCNPJ() {
+      const cnpj = document.getElementById("cnpjInput").value.replace(/\D/g, '');
+      if (cnpj.length !== 14) {
+        alert("CNPJ inválido!");
+        return;
+      }
+
+      const url = `https://comercial.cnpj.ws/cnpj/${cnpj}?token=SuBKCfTU0zQ1LIVjOAfHHQcn8OVJjr0UCwo1qeEQaCTC`;
+
+      try {
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error("Erro na consulta");
+        const data = await resp.json();
+
+        const est = data.estabelecimento || {};
+        const cidade = data.cidade?.nome || "";
+        const estado = data.estado?.sigla || "";
+        const socios = (data.socios || []).map(s => s.nome).join(", ");
+        const cnaes = (est.atividades_secundarias || []).map(a => a.descricao).join(" | ");
+
+        const dados = {
+          "Razão Social": data.razao_social || "",
+          "Nome Fantasia": est.nome_fantasia || "",
+          "Situação Cadastral": est.situacao_cadastral || "",
+          "Data de Abertura": est.data_inicio_atividade || "",
+          "Natureza Jurídica": data.natureza_juridica?.descricao || "",
+          "Capital Social": data.capital_social || "",
+          "Simples": data.simples ? "Sim" : "Não",
+          "Email": est.email || "",
+          "Telefone": est.telefone1 || "",
+          "Endereço": `${est.logradouro || ""}, ${est.numero || ""} - ${est.bairro || ""}, ${cidade}/${estado}`,
+          "CEP": est.cep || "",
+          "CNAE Principal": data.atividade_principal?.descricao || "",
+          "CNAEs Secundários": cnaes,
+          "Sócios": socios
+        };
+
+        document.getElementById("dadosEmpresa").textContent = JSON.stringify(dados, null, 2);
+        document.getElementById("resultado").style.display = "block";
+      } catch (err) {
+        alert("Erro ao consultar CNPJ.");
+        console.error(err);
+      }
+    }
+  </script>
+
+</body>
+</html>
