@@ -14,17 +14,16 @@
     body {
       margin: 0;
       padding: 0;
-      background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+      background: #f9fafb;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
       min-height: 100vh;
     }
 
     h1 {
       margin-top: 60px;
-      font-size: 2.2rem;
+      font-size: 2.4rem;
       color: #1f2937;
     }
 
@@ -38,49 +37,50 @@
       max-width: 600px;
     }
 
-    input {
+    input, button {
       width: 100%;
       padding: 15px;
       font-size: 1rem;
       border-radius: 8px;
-      border: 1px solid #ccc;
       margin-bottom: 16px;
     }
 
+    input {
+      border: 1px solid #ccc;
+    }
+
     button {
-      width: 100%;
       background: linear-gradient(to right, #6366f1, #8b5cf6);
       border: none;
-      padding: 14px;
       color: white;
-      font-size: 1rem;
       font-weight: 600;
-      border-radius: 8px;
       cursor: pointer;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+      width: 90%;
+      max-width: 1000px;
     }
 
     .card {
       background: white;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.06);
-      margin-top: 40px;
-      width: 90%;
-      max-width: 800px;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
 
-    .campo {
-      margin-bottom: 15px;
-    }
-
-    .campo .label {
+    .label {
       font-weight: 600;
-      color: #374151;
+      color: #4b5563;
     }
 
-    .campo .valor {
+    .valor {
       margin-top: 4px;
-      color: #111827;
+      color: #1f2937;
     }
   </style>
 </head>
@@ -91,12 +91,20 @@
     <button onclick="consultarCNPJ()">Consultar</button>
   </div>
 
-  <div class="card" id="resultado" style="display:none;">
-    <h2 style="margin-top: 0">📋 Dados da Empresa</h2>
-    <div id="dadosEmpresa"></div>
-  </div>
+  <div class="cards" id="resultado" style="display:none;"></div>
 
   <script>
+    function formatarData(dataIso) {
+      if (!dataIso) return "-";
+      const [ano, mes, dia] = dataIso.split("T")[0].split("-");
+      return `${dia}/${mes}/${ano}`;
+    }
+
+    function formatarMoeda(valor) {
+      if (!valor || isNaN(valor)) return "-";
+      return parseFloat(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
     async function consultarCNPJ() {
       const cnpj = document.getElementById("cnpjInput").value.replace(/\D/g, '');
       if (cnpj.length !== 14) {
@@ -121,9 +129,9 @@
           "Razão Social": data.razao_social,
           "Nome Fantasia": est.nome_fantasia,
           "Situação Cadastral": est.situacao_cadastral,
-          "Data de Abertura": est.data_inicio_atividade,
+          "Data de Abertura": formatarData(est.data_inicio_atividade),
           "Natureza Jurídica": data.natureza_juridica?.descricao,
-          "Capital Social": data.capital_social,
+          "Capital Social": formatarMoeda(data.capital_social),
           "Simples": data.simples ? "Sim" : "Não",
           "Email": est.email,
           "Telefone": est.telefone1,
@@ -134,19 +142,19 @@
           "Sócios": socios
         };
 
-        const container = document.getElementById("dadosEmpresa");
+        const container = document.getElementById("resultado");
         container.innerHTML = "";
 
         for (const [label, valor] of Object.entries(campos)) {
           container.innerHTML += `
-            <div class="campo">
+            <div class="card">
               <div class="label">${label}</div>
               <div class="valor">${valor || "-"}</div>
             </div>
           `;
         }
 
-        document.getElementById("resultado").style.display = "block";
+        container.style.display = "grid";
       } catch (err) {
         alert("Erro ao consultar CNPJ.");
         console.error(err);
