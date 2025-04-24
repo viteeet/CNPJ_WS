@@ -2,51 +2,97 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <title>Consulta de CNPJ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Consulta CNPJ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      margin: 40px;
-      background: #f0f2f5;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
     }
+
     h1 {
-      color: #333;
+      margin-top: 60px;
+      font-size: 2.2rem;
+      color: #1f2937;
     }
-    input, button {
-      padding: 10px;
-      font-size: 16px;
-      margin-top: 10px;
+
+    .input-container {
+      background: white;
+      padding: 30px;
+      margin-top: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+      width: 90%;
+      max-width: 600px;
     }
+
+    input {
+      width: 100%;
+      padding: 15px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 16px;
+    }
+
+    button {
+      width: 100%;
+      background: linear-gradient(to right, #6366f1, #8b5cf6);
+      border: none;
+      padding: 14px;
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
     .card {
       background: white;
-      padding: 20px;
-      margin-top: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.06);
+      margin-top: 40px;
+      width: 90%;
       max-width: 800px;
     }
+
     .campo {
-      margin: 8px 0;
+      margin-bottom: 15px;
     }
-    .label {
-      font-weight: bold;
-      color: #555;
+
+    .campo .label {
+      font-weight: 600;
+      color: #374151;
     }
-    .valor {
-      margin-left: 10px;
-      color: #222;
+
+    .campo .valor {
+      margin-top: 4px;
+      color: #111827;
     }
   </style>
 </head>
 <body>
-
   <h1>🔎 Consulta de CNPJ</h1>
-
-  <input type="text" id="cnpjInput" placeholder="Digite o CNPJ sem pontos ou traços" />
-  <button onclick="consultarCNPJ()">Consultar</button>
+  <div class="input-container">
+    <input type="text" id="cnpjInput" placeholder="Digite o CNPJ (somente números)" />
+    <button onclick="consultarCNPJ()">Consultar</button>
+  </div>
 
   <div class="card" id="resultado" style="display:none;">
-    <h2>📋 Dados da Empresa</h2>
+    <h2 style="margin-top: 0">📋 Dados da Empresa</h2>
     <div id="dadosEmpresa"></div>
   </div>
 
@@ -94,8 +140,8 @@
         for (const [label, valor] of Object.entries(campos)) {
           container.innerHTML += `
             <div class="campo">
-              <span class="label">${label}:</span>
-              <span class="valor">${valor || "-"}</span>
+              <div class="label">${label}</div>
+              <div class="valor">${valor || "-"}</div>
             </div>
           `;
         }
@@ -107,6 +153,5 @@
       }
     }
   </script>
-
 </body>
 </html>
