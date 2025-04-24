@@ -57,28 +57,34 @@
       cursor: pointer;
     }
 
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
+    .resultado-container {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.05);
       margin-top: 30px;
       width: 90%;
-      max-width: 1000px;
+      max-width: 800px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
     }
 
-    .card {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    .resultado-container.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
-    .label {
+    .campo {
+      margin-bottom: 15px;
+    }
+
+    .campo .label {
       font-weight: 600;
       color: #4b5563;
     }
 
-    .valor {
+    .campo .valor {
       margin-top: 4px;
       color: #1f2937;
     }
@@ -91,7 +97,7 @@
     <button onclick="consultarCNPJ()">Consultar</button>
   </div>
 
-  <div class="cards" id="resultado" style="display:none;"></div>
+  <div class="resultado-container" id="resultado"></div>
 
   <script>
     function formatarData(dataIso) {
@@ -147,14 +153,14 @@
 
         for (const [label, valor] of Object.entries(campos)) {
           container.innerHTML += `
-            <div class="card">
+            <div class="campo">
               <div class="label">${label}</div>
               <div class="valor">${valor || "-"}</div>
             </div>
           `;
         }
 
-        container.style.display = "grid";
+        container.classList.add("visible");
       } catch (err) {
         alert("Erro ao consultar CNPJ.");
         console.error(err);
