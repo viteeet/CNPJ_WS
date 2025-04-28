@@ -19,7 +19,6 @@
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
-      position: relative;
     }
 
     h1 {
@@ -69,11 +68,9 @@
       opacity: 0;
       transform: translateY(20px);
       transition: opacity 0.5s ease, transform 0.5s ease;
-      display: none;
     }
 
     .resultado-container.visible {
-      display: block;
       opacity: 1;
       transform: translateY(0);
     }
@@ -91,33 +88,6 @@
       margin-top: 4px;
       color: #1f2937;
     }
-
-    /* Estilos do loading */
-    #loading {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(255,255,255,0.8);
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-    }
-
-    .spinner {
-      width: 60px;
-      height: 60px;
-      border: 6px solid #ccc;
-      border-top-color: #6366f1;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
   </style>
 </head>
 <body>
@@ -129,16 +99,11 @@
 
   <div class="resultado-container" id="resultado"></div>
 
-  <!-- Loading Spinner -->
-  <div id="loading">
-    <div class="spinner"></div>
-  </div>
-
   <script>
     function formatarData(dataIso) {
       if (!dataIso) return "-";
       const [ano, mes, dia] = dataIso.split("T")[0].split("-");
-      return `${dia}/${mes}/${ano}`;
+      return ${dia}/${mes}/${ano};
     }
 
     function formatarMoeda(valor) {
@@ -153,13 +118,7 @@
         return;
       }
 
-      const loading = document.getElementById("loading");
-      const resultado = document.getElementById("resultado");
-      resultado.classList.remove("visible"); // esconde resultado anterior
-      resultado.style.display = "none"; // reseta
-      loading.style.display = "flex"; // mostra loading
-
-      const url = `https://comercial.cnpj.ws/cnpj/${cnpj}?token=SuBKCfTU0zQ1LIVjOAfHHQcn8OVJjr0UCwo1qeEQaCTC`;
+      const url = https://comercial.cnpj.ws/cnpj/${cnpj}?token=SuBKCfTU0zQ1LIVjOAfHHQcn8OVJjr0UCwo1qeEQaCTC;
 
       try {
         const resp = await fetch(url);
@@ -182,29 +141,29 @@
           "Simples": data.simples ? "Sim" : "Não",
           "Email": est.email,
           "Telefone": est.telefone1,
-          "Endereço": `${est.logradouro}, ${est.numero} - ${est.bairro}, ${cidade}/${estado}`,
+          "Endereço": ${est.logradouro}, ${est.numero} - ${est.bairro}, ${cidade}/${estado},
           "CEP": est.cep,
           "CNAE Principal": data.atividade_principal?.descricao,
           "CNAEs Secundários": cnaes,
           "Sócios": socios
         };
 
-        resultado.innerHTML = "";
+        const container = document.getElementById("resultado");
+        container.innerHTML = "";
+
         for (const [label, valor] of Object.entries(campos)) {
-          resultado.innerHTML += `
+          container.innerHTML += 
             <div class="campo">
               <div class="label">${label}</div>
               <div class="valor">${valor || "-"}</div>
             </div>
-          `;
+          ;
         }
 
-        resultado.classList.add("visible"); // agora sim aparece bonitinho
+        container.classList.add("visible");
       } catch (err) {
         alert("Erro ao consultar CNPJ.");
         console.error(err);
-      } finally {
-        loading.style.display = "none"; // some o loading
       }
     }
   </script>
