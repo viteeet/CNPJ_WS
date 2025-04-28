@@ -88,6 +88,34 @@
       margin-top: 4px;
       color: #1f2937;
     }
+
+    /* Estilos do loading */
+    #loading {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 6px solid #ccc;
+      border-top-color: #6366f1;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
@@ -98,6 +126,11 @@
   </div>
 
   <div class="resultado-container" id="resultado"></div>
+
+  <!-- Loading Spinner -->
+  <div id="loading">
+    <div class="spinner"></div>
+  </div>
 
   <script>
     function formatarData(dataIso) {
@@ -117,6 +150,9 @@
         alert("CNPJ inválido!");
         return;
       }
+
+      const loading = document.getElementById("loading");
+      loading.style.display = "flex"; // Mostra o loading
 
       const url = `https://comercial.cnpj.ws/cnpj/${cnpj}?token=SuBKCfTU0zQ1LIVjOAfHHQcn8OVJjr0UCwo1qeEQaCTC`;
 
@@ -164,6 +200,8 @@
       } catch (err) {
         alert("Erro ao consultar CNPJ.");
         console.error(err);
+      } finally {
+        loading.style.display = "none"; // Esconde o loading
       }
     }
   </script>
